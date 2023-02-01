@@ -50,32 +50,14 @@ public class SocialMediaController {
         ObjectMapper om = new ObjectMapper();
         Account account = om.readValue(ctx.body(), Account.class);
         Account addedAccount = accountService.addAccount(account);
-        // if(om.writeValueAsString(account) == null)
-        // {
-        //     ctx.status(400);
-        // }
-
-        // if(account.password.length() < 4)
-        // {
-        //     ctx.status(400);
-        // }
-
-        // if(account.username == account.getUsername())
-        // {
-        //     ctx.status(400);
-        // }
 
         if(account.username != null)
         {
             ctx.status(400);
         }
 
-        if(account.password. < 4)
+        if (account.username.isEmpty() == false) 
         {
-            ctx.status(400);
-        }
-
-        if (account.username.isEmpty() == false) {
             ctx.json(om.writeValueAsString(addedAccount));
             ctx.status(200);
         }
