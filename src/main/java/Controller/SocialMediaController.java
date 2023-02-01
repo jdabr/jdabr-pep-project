@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import DAO.AccountDAO;
 
+import static org.mockito.ArgumentMatchers.nullable;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import Model.Account;
@@ -48,23 +50,32 @@ public class SocialMediaController {
         ObjectMapper om = new ObjectMapper();
         Account account = om.readValue(ctx.body(), Account.class);
         Account addedAccount = accountService.addAccount(account);
-        if(addedAccount.username == null)
+        // if(om.writeValueAsString(account) == null)
+        // {
+        //     ctx.status(400);
+        // }
+
+        // if(account.password.length() < 4)
+        // {
+        //     ctx.status(400);
+        // }
+
+        // if(account.username == account.getUsername())
+        // {
+        //     ctx.status(400);
+        // }
+
+        if(account.username != null)
         {
             ctx.status(400);
         }
 
-        if(account.password.length() < 4)
+        if(account.password. < 4)
         {
             ctx.status(400);
         }
 
-        if(account.username == account.getUsername())
-        {
-            ctx.status(400);
-        }
-
-        if(addedAccount != null)
-        {
+        if (account.username.isEmpty() == false) {
             ctx.json(om.writeValueAsString(addedAccount));
             ctx.status(200);
         }
