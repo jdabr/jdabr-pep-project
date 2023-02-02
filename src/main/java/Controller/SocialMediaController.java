@@ -63,8 +63,21 @@ public class SocialMediaController {
         }
     }
 
-    private void postLoginHandler(Context ctx) {
-        ctx.json("sample text");
+    private void postLoginHandler(Context ctx)throws JsonProcessingException {
+        ObjectMapper om = new ObjectMapper();
+        Account account = om.readValue(ctx.body(), Account.class);
+        Account loginAccount = accountService.loginAccountInfo(account);
+
+        if (account.username.isEmpty() == false) 
+        {
+            ctx.status(401);
+        }
+
+        else
+        {
+            ctx.json(om.writeValueAsString(loginAccount));
+            ctx.status(200);
+        }
     }
 
     private void postMessagesHandler(Context ctx) {
