@@ -56,7 +56,7 @@ public class SocialMediaController {
             ctx.status(400);
         }
 
-        if (account.username.isEmpty() == false) 
+        if (account.username.isEmpty() == false && account.password.length() >= 4) 
         {
             ctx.json(om.writeValueAsString(addedAccount));
             ctx.status(200);
