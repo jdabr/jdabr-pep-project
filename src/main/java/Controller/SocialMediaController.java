@@ -51,15 +51,14 @@ public class SocialMediaController {
         Account account = om.readValue(ctx.body(), Account.class);
         Account addedAccount = accountService.addAccount(account);
 
-        if(account.username != null)
-        {
-            ctx.status(400);
-        }
-
-        if (account.username.isEmpty() == false && account.password.length() >= 4) 
+        if (account.username.isEmpty() == false && account.password.length() >= 4 && addedAccount != null) 
         {
             ctx.json(om.writeValueAsString(addedAccount));
             ctx.status(200);
+        }
+
+        else{
+            ctx.status(400);
         }
     }
 
