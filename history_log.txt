@@ -1,7 +1,7 @@
-commit f2e84d9326edd2fae3e80667fa5f8ab6d8997364
+commit bfb25fcd00ca9fa4a3ce0ef53b36b5ea2dc18c6e
 Author: Joseph Dabreu <joeydabreu@gmail.com>
-Date:   Thu Feb 2 04:07:19 2023 +0000
+Date:   Fri Feb 3 12:52:57 2023 +0000
 
-    Added postLoginHandler logic/service/Dao
+    Added duplicate username logic to sm controller
 
- 3 files changed, 41 insertions(+), 2 deletions(-)
+ 1 file changed, 5 insertions(+), 6 deletions(-)

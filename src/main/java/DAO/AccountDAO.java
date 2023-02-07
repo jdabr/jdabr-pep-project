@@ -49,7 +49,7 @@ public class AccountDAO {
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
-        return null;
+        return account;
     }
 
 

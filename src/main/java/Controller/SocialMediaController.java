@@ -3,15 +3,19 @@ package Controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import DAO.AccountDAO;
+import DAO.MessageDAO;
 
 import static org.mockito.ArgumentMatchers.nullable;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import Model.Account;
+import Model.Message;
 import Service.AccountService;
+import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import java.util.List;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -20,11 +24,11 @@ import io.javalin.http.Context;
  */
 public class SocialMediaController {
 
-    //MessageService messageService;
+    MessageService messageService;
     AccountService accountService;
 
     public SocialMediaController(){
-        //this.messageService = new BookService();
+        this.messageService = new MessageService();
         this.accountService = new AccountService();
     }
 
@@ -38,7 +42,7 @@ public class SocialMediaController {
         app.post("/register", this::postRegisterHandler);
         app.post("/login", this::postLoginHandler);
         app.post("/messages", this::postMessagesHandler);
-        app.get("/messages", this::getMessagesHandler);
+        app.get("/messages", this::getAllMessagesHandler);
         return app;
     }
 
@@ -67,7 +71,7 @@ public class SocialMediaController {
         Account account = om.readValue(ctx.body(), Account.class);
         Account loginAccount = accountService.loginAccountInfo(account);
 
-        if (account.username.isEmpty() == false) 
+        if (account.username.isEmpty() == true) 
         {
             ctx.status(401);
         }
@@ -83,8 +87,9 @@ public class SocialMediaController {
         ctx.json("sample text");
     }
 
-    private void getMessagesHandler(Context ctx) {
-        ctx.json("sample text");
+    private void getAllMessagesHandler(Context ctx) {
+        List<Message> messages = messageService.getAllMessages();
+        ctx.json(messages);
     }
 
 }
