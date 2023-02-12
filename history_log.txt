@@ -1,7 +1,7 @@
-commit bfb25fcd00ca9fa4a3ce0ef53b36b5ea2dc18c6e
+commit 86c0b75b2c5b3e1986bd77f46301fc3c55fbb7f4
 Author: Joseph Dabreu <joeydabreu@gmail.com>
-Date:   Fri Feb 3 12:52:57 2023 +0000
+Date:   Sun Feb 12 15:48:39 2023 +0000
 
-    Added duplicate username logic to sm controller
+    Added service logic for MessageDAO functions
 
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ 1 file changed, 51 insertions(+), 3 deletions(-)
