@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import DAO.AccountDAO;
 import DAO.MessageDAO;
 
-import static org.mockito.ArgumentMatchers.nullable;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import Model.Account;
@@ -15,6 +13,9 @@ import Service.AccountService;
 import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+
+import static org.mockito.ArgumentMatchers.nullable;
+
 import java.util.List;
 
 /**
@@ -41,15 +42,21 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
         app.post("/register", this::postRegisterHandler);
         app.post("/login", this::postLoginHandler);
-        app.post("/messages", this::postMessagesHandler);
         app.get("/messages", this::getAllMessagesHandler);
+        app.post("/messages", this::postMessagesHandler);
+        app.get("/messages/{message_id}", this::getMessageHandler);
+        app.delete("/messages/{message_id}", this::deleteMessageHandler);
+        app.patch("/messages/{message_id}", this::patchMessageHandler);
+        app.get("/accounts/{account_id}/messages", this::getMessagesByAccountHandler);
         return app;
     }
 
-    /**
-     * This is an example handler for an example endpoint.
-     * @param context The Javalin Context object manages information about both the HTTP request and response.
-     */
+    private void getMessagesByAccountHandler(Context ctx)throws JsonProcessingException {
+        List<Message> messages = messageService.getAllMessagesByAccountId();
+        ctx.json(messages);
+    }
+
+    //PostRegister/Login
     private void postRegisterHandler(Context ctx)throws JsonProcessingException {
         ObjectMapper om = new ObjectMapper();
         Account account = om.readValue(ctx.body(), Account.class);
@@ -70,8 +77,7 @@ public class SocialMediaController {
         ObjectMapper om = new ObjectMapper();
         Account account = om.readValue(ctx.body(), Account.class);
         Account loginAccount = accountService.loginAccountInfo(account);
-
-        if (account.username.isEmpty() == true) 
+        if(loginAccount == null)
         {
             ctx.status(401);
         }
@@ -83,13 +89,95 @@ public class SocialMediaController {
         }
     }
 
-    private void postMessagesHandler(Context ctx) {
-        ctx.json("sample text");
-    }
-
-    private void getAllMessagesHandler(Context ctx) {
+    //Messages
+    private void getAllMessagesHandler(Context ctx)throws JsonProcessingException {
         List<Message> messages = messageService.getAllMessages();
         ctx.json(messages);
+    }
+
+    private void postMessagesHandler(Context ctx)throws JsonProcessingException {
+        ObjectMapper om = new ObjectMapper();
+        Message message = om.readValue(ctx.body(), Message.class);
+        Message loginMessage = messageService.insertMessageInfo(message);
+
+        if(loginMessage == null || message.message_text.isEmpty() == true || message.message_text.length() > 255)
+        {
+            ctx.status(400);
+        }
+
+        else
+        {
+            ctx.json(om.writeValueAsString(loginMessage));
+            ctx.status(200);
+        }
+
+    }
+
+    private void getMessageHandler(Context ctx) throws JsonProcessingException{
+        ObjectMapper om = new ObjectMapper();
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message message = messageService.getMessageAfterPosting(messageId);
+        ctx.json(om.writeValueAsString(message));
+        ctx.status(200);
+    }
+
+    //Not finished
+    private void deleteMessageHandler(Context ctx)throws JsonProcessingException {
+        ObjectMapper om = new ObjectMapper();
+        //Message message = om.readValue(ctx.body(), Message.class);
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message loginMessage = messageService.getMessageAfterPosting(messageId);
+        Message deletedLoginMessage = messageService.deleteMessage(messageId, loginMessage);
+
+        //if(deletedLoginMessage == null)
+        {
+            ctx.json(om.writeValueAsString(deletedLoginMessage));
+            ctx.status(200);
+        }
+
+        // else
+        // {
+        //     ctx.status(400);
+        // }
+    }
+
+    //Works but does not update properly in API
+    // private void patchMessageHandler(Context ctx)throws JsonProcessingException {
+    //     ObjectMapper om = new ObjectMapper();
+    //     Message message = om.readValue(ctx.body(), Message.class);
+    //     int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+    //     Message patchedMessage = messageService.patchMessageText(messageId, message);
+
+    //         if(patchedMessage.message_text.isEmpty() == true ||  patchedMessage.message_text.length() > 255)
+    //         {
+    //             ctx.status(400);
+    //         }
+
+    //         else
+    //         {
+    //             ctx.json(om.writeValueAsString(patchedMessage));
+    //             ctx.status(200);
+    //         }
+
+    // }
+
+    //TESTING
+        private void patchMessageHandler(Context ctx)throws JsonProcessingException {
+        ObjectMapper om = new ObjectMapper();
+        Message message = om.readValue(ctx.body(), Message.class);
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message patchedMessage = messageService.patchMessageText(messageId, message);
+
+            if(patchedMessage.message_text.isEmpty() == true ||  patchedMessage.message_text.length() > 255)
+            {
+                ctx.status(400);
+            }
+
+            else
+            {
+                ctx.json(om.writeValueAsString(patchedMessage));
+                ctx.status(200);
+            }
     }
 
 }
