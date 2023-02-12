@@ -2,6 +2,7 @@ package Service;
 
 import Model.Account;
 import DAO.AccountDAO;
+import DAO.MessageDAO;
 
 import java.util.List;
 
@@ -27,6 +28,6 @@ public class AccountService {
 
     public Account loginAccountInfo(Account account)
     {
-        return accountDAO.loginAccount(account);
+        return accountDAO.loginAccount(account.getUsername(), account.getPassword());
     }
 }
