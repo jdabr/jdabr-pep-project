@@ -24,11 +24,6 @@ public class MessageService {
         return messageDAO.getAllMessages();
     }
 
-    // public Message addMessageInfo(Message message)
-    // {
-    //     return messageDAO.addMessage(message);
-    // }
-
     public Message insertMessageInfo(Message message)
     {
         return messageDAO.insertMessage(message);
@@ -41,30 +36,48 @@ public class MessageService {
     }
 
     //Delete works, but when the API calls the message it's not deleted
-    public Message deleteMessage(int id, Message message)
-    {
-        //Message test = messageDAO.getMessage(id);
-        // test.setMessage_id(message.getMessage_id());
-        message.setMessage_id(id);
-        messageDAO.deletedMessage(id, message);
-        //messageDAO.deletedMessage(id, message);
-        return message;
-    }
+    // public Message deleteMessage(int id, Message message)
+    // {
+    //     //Message test = messageDAO.getMessage(id);
+    //     // test.setMessage_id(message.getMessage_id());
+    //     message.setMessage_id(id);
+    //     messageDAO.deletedMessage(id, message);
+    //     //messageDAO.deletedMessage(id, message);
+    //     return message;
+    // }
 
-    //Update works, but gets 500 error when called for a non existing message
-    public Message patchMessageText(int id, Message message)
-    {
-        message.setMessage_text(message.getMessage_text());
-        message.setMessage_id(id);
-        message.setPosted_by(id);
-        message.setTime_posted_epoch(messageDAO.getMessage(id).getTime_posted_epoch());
-        messageDAO.patchMessage(id, message);
-        return message;
-    }
 
     public List<Message> getAllMessagesByAccountId()
     {
         return messageDAO.getAllMessagesByAccountId();
+    }
+
+    //TESTING
+    public Message getMessageById(int message_id) {
+        Message message = messageDAO.getMessageById(message_id);
+        if (message.getMessage_text().isEmpty()) {
+            return null;
+        } else {
+            return message;
+        }
+    }
+
+    public Message deleteMessage(int id)
+    {
+        if(getMessageById(id) != null)
+        {
+            return messageDAO.getMessage(id); 
+        }
+        return null;
+    }
+
+    public Message updateMessages(int message_id, Message message)
+    {
+        if(getMessageById(message_id) != null && message.message_text != "" && message.message_text.length() <= 255)
+        {
+            return messageDAO.updateMessage(message_id, message); 
+        }
+        return null;
     }
 
 }
