@@ -1,7 +1,6 @@
 package DAO;
 
 import Model.Message;
-import Service.MessageService;
 import Util.ConnectionUtil;
 
 import java.sql.*;
@@ -34,40 +33,6 @@ public class MessageDAO {
         }
         return messages;
     }
-    
-    // public Message addMessage(Message message)
-    //     {
-    //         Connection connection = ConnectionUtil.getConnection();
-    //        try 
-    //        {
-    //         String sql = "SELECT * FROM message WHERE posted_by = ?"; 
-    //         PreparedStatement preparedStatement = connection.prepareStatement(sql);
-    //         preparedStatement.setInt(1, message.getMessage_id());
-    //         preparedStatement.setInt(2, message.getPosted_by()); 
-    //         preparedStatement.setInt(1, message.message_id);
-    //         preparedStatement.setLong(2, message.time_posted_epoch);
-    //         preparedStatement.executeQuery(); 
-
-    //          ResultSet rs = preparedStatement.executeQuery(); 
-
-    //          while(rs.next())
-    //          {
-    //              Message messages = new Message(
-    //              rs.getInt("message_id"),
-    //              rs.getInt("posted_by"),
-    //              rs.getString("message_text"),
-    //              rs.getLong("time_posted_epoch"));
-    //              return messages;
-    //          }
-
-    //          return message;
-    //         }
-    //         catch(SQLException e)
-    //        {
-    //         System.out.println(e.getMessage());
-    //        } 
-    //        return null; 
-    //     }
 
     public Message insertMessage(Message message){
         Connection connection = ConnectionUtil.getConnection();
@@ -95,19 +60,25 @@ public class MessageDAO {
     public Message getMessage(int id){
         Connection connection = ConnectionUtil.getConnection();
         try {
+
+            
             String sql = "SELECT * FROM message WHERE message_id = ?";
             
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
 
             ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()){
+            if(rs.next()){
                 Message messageById = new Message(
                         rs.getInt("message_id"), 
                         rs.getInt("posted_by"),
                         rs.getString("message_text"),
                         rs.getLong("time_posted_epoch"));
                 return messageById;
+            }
+            else {
+                // return an empty message to indicate that the requested message does not exist
+                return new Message(0, 0, "", 0);
             }
         }catch(SQLException e){
             System.out.println(e.getMessage());
@@ -116,38 +87,96 @@ public class MessageDAO {
     }
 
     //may be wrong syntactically
-    public void deletedMessage(int id, Message message){
+    // public void deletedMessage(int id, Message message){
+    //     Connection connection = ConnectionUtil.getConnection();
+    //     try {
+    //         String sql = "DELETE FROM message WHERE message_id = ?";
+            
+    //         PreparedStatement preparedStatement = connection.prepareStatement(sql);
+    //         preparedStatement.setInt(1, id);
+    //         preparedStatement.executeUpdate();
+
+    //     }catch(SQLException e){
+    //         System.out.println(e.getMessage());
+    //     }
+    // }
+
+    public Message getMessageById(int message_id) {
         Connection connection = ConnectionUtil.getConnection();
         try {
-            String sql = "DELETE FROM message WHERE message_id = ?";
-            
+            String sql = "SELECT * FROM message WHERE message_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
-            preparedStatement.executeUpdate();
+            preparedStatement.setInt(1, message_id);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                Message message = new Message(rs.getInt("message_id"), rs.getInt("posted_by"),
+                        rs.getString("message_text"), rs.getLong("time_posted_epoch"));
+                return message;
+            } else {
 
-        }catch(SQLException e){
+
+                // return an empty message to indicate that the requested message does not exist
+                return new Message(0, 0, "", 0);
+            }
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return null; 
     }
-
-    public void patchMessage(int id, Message message){
+    
+    public Message updateMessage(int message_id, Message message)
+    {
         Connection connection = ConnectionUtil.getConnection();
-        try {
-            //Write SQL logic here
+        try
+        {
+            if(getMessageById(message_id) == null)
+            {
+                return null; 
+            }
             String sql = "UPDATE message SET message_text = ? WHERE message_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
-            //write PreparedStatement setString and setInt methods here.
-            //preparedStatement.setInt(1, message.getPosted_by());
-            preparedStatement.setString(1, message.getMessage_text());
-            //preparedStatement.setLong(2, message.getTime_posted_epoch());
-            preparedStatement.setInt(2, id);
-            preparedStatement.executeUpdate();
-            
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
+            preparedStatement.setString(1,message.getMessage_text());
+            preparedStatement.setInt(2,message_id); 
+
+            preparedStatement.executeUpdate(); 
+            return getMessageById(message_id); 
         }
+        catch(SQLException e)
+        {
+            System.out.println(e.getMessage()); 
+        }
+        return null;
+
     }
+
+    //testing delete
+    public Message deletedMessage(int id)
+    {
+        Connection connection = ConnectionUtil.getConnection();
+        try
+        {
+            if(getMessageById(id) == null)
+            {
+                return null; 
+            }
+            String sql = "DELETE FROM message WHERE message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+           // preparedStatement.setString(1,message.getMessage_text());
+            preparedStatement.setInt(1,id); 
+            preparedStatement.executeUpdate(); 
+
+            return getMessageById(id); 
+        }
+        catch(SQLException e)
+        {
+            System.out.println(e.getMessage()); 
+        }
+        return null;
+
+    }
+
 
     public List<Message> getAllMessagesByAccountId(){
         Connection connection = ConnectionUtil.getConnection();
