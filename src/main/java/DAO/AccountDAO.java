@@ -9,7 +9,6 @@ import java.util.List;
 
 public class AccountDAO {
 
-
     public Account insertAccount(Account account){
         Connection connection = ConnectionUtil.getConnection();
         try {
@@ -55,8 +54,6 @@ public class AccountDAO {
 
            return null; 
         }
-
-
 
     public List<Account> getAllAccounts(){
         Connection connection = ConnectionUtil.getConnection();

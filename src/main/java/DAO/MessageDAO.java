@@ -65,7 +65,8 @@ public class MessageDAO {
             preparedStatement.setInt(1, id);
 
             ResultSet rs = preparedStatement.executeQuery();
-            if(rs.next()){
+            if(rs.next())
+            {
                 Message messageById = new Message(
                         rs.getInt("message_id"), 
                         rs.getInt("posted_by"),
@@ -112,7 +113,6 @@ public class MessageDAO {
             }
             String sql = "UPDATE message SET message_text = ? WHERE message_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-
             preparedStatement.setString(1,message.getMessage_text());
             preparedStatement.setInt(2,id); 
 
@@ -132,10 +132,6 @@ public class MessageDAO {
         Connection connection = ConnectionUtil.getConnection();
         try
         {
-            if(getMessageById(id) == null)
-            {
-                return null; 
-            }
             String sql = "DELETE FROM message WHERE message_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1,id); 

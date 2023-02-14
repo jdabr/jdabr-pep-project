@@ -12,15 +12,18 @@ public class AccountService {
         accountDAO = new AccountDAO();
     }
 
-    public AccountService(AccountDAO accountDAO){
+    public AccountService(AccountDAO accountDAO)
+    {
         this.accountDAO = accountDAO;
     }
 
-    public List<Account> getAllAccounts(Account account){
+    public List<Account> getAllAccounts(Account account)
+    {
         return accountDAO.getAllAccounts();
     }
 
-    public Account addAccount(Account account){
+    public Account addAccount(Account account)
+    {
         return accountDAO.insertAccount(account);
     }
 
