@@ -2,7 +2,6 @@ package Service;
 
 import Model.Account;
 import DAO.AccountDAO;
-import DAO.MessageDAO;
 
 import java.util.List;
 
@@ -17,7 +16,6 @@ public class AccountService {
         this.accountDAO = accountDAO;
     }
 
-    //actual logic under here:
     public List<Account> getAllAccounts(Account account){
         return accountDAO.getAllAccounts();
     }
