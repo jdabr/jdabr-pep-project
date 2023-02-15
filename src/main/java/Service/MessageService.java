@@ -3,6 +3,7 @@ package Service;
 import Model.Message;
 import DAO.MessageDAO;
 
+
 import java.util.List;
 
 public class MessageService {
@@ -40,30 +41,17 @@ public class MessageService {
 
     public Message getMessage(int id)
     {
-        Message message = messageDAO.getMessageById(id);
-        return message;
+        return messageDAO.getMessageById(id);
     }
 
-    public Message deleteMessage(int id)
-    {
-        if(getMessage(id) == null)
+    public Message getMessageById(int id) {
+        if (messageDAO.getMessageById(id).getMessage_text().isEmpty()) 
         {
             return null;
-        }
-
-        if(getMessage(id) != null)
+        } 
+        else 
         {
-            return messageDAO.getMessage(id); 
-        }
-        return null;
-    }
-
-    public Message getMessageById(int message_id) {
-        Message message = messageDAO.getMessageById(message_id);
-        if (message.getMessage_text().isEmpty()) {
-            return null;
-        } else {
-            return message;
+            return messageDAO.getMessageById(id);
         }
     }
 
@@ -76,4 +64,12 @@ public class MessageService {
         return null;
     }
 
+    public Message deleteMessage(int id)
+    {
+        if(getMessageById(id) != null)
+        {
+            return messageDAO.getMessageById(id);
+        }
+        return null;
+    }
 }
